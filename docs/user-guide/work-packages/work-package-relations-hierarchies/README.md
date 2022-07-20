@@ -62,11 +62,15 @@ You can click on the number to display the work packages which have the relation
 
 ![Relations_column](Relations_column.png)
 
+Also, you can visualize relations to the type of work package that is related (e.g. Task, Milestone, Phase).
+
+![display relations of work package types](image-20220720091445734.png)
+
 ## Work package hierarchies
 
 Work packages can be structured hierarchically, e.g. in order to break down a large work package into several smaller tasks. This means that there's a parent work package that has at least one child work package.
 
-## Adding a child work package
+### Adding a child work package
 
 There are **three ways to add or create a child work package**:
 
@@ -86,7 +90,7 @@ Insert the name of the new work package and save the newly created work package 
 
 For more information on the work package creation take a look at the guideline on [creating a work package](../create-work-package).
 
-## Change the parent work package
+### Change the parent work package
 
 To edit or remove the parent of a work package open the work package. At the top of the details view of the work package you will see the work package hierarchy. Click on the **edit icon** or **delete icon** to change the work package parent.
 
