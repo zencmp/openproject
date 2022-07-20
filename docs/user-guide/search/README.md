@@ -12,6 +12,8 @@ There are two ways to search for work packages, documents, projects, etc. in Ope
 
 ## Search bar
 
+The search bar of OpenProject is configured to allow a full text search. The title and the description of a work package can also be found by [filtering by text](../work-packages/work-package-table-configuration/#filtering-by-text).
+
 The search bar can be found at the upper right of the application. To search for work package subjects, enter the terms you're looking for and do not press the Enter key. An auto-completer will suggest matching work packages from all projects you have access to. You can either click on them or right-click and open them in a new tab.
 
 Searching for e.g. "big cat" will also return work packages with the description "big old cat".
@@ -32,12 +34,11 @@ Now, you can find the results for your search term from different categories/par
 
 Please note: It is not possible to find content from archived projects. You will have to un-archive them first on the [global projects overview page](../projects/#global-projects-overview---view-all-projects).
 
-## Full text search, incl. work package attachments
+## Search for work package attachments or file names (Premium feature)
 
-The search bar of Openproject is configured to allow a full text search. This means that you can search not only headings but also descriptions and texts, such as a wiki text or the description of a work package.
+Aside from full-text search, you can also search work packages based on their attached file name or even within the content of an attachment. Quickly find work package attachments based on their file name or their content within the file - using full text search.
+Open the filters for work packages and add the Attachment content or Attachment file name as a filter option.  You can search for frequently used files (e.g. Text files, PDF, Excel files, Word, Libre office,…) and the content of those files.
 
-The title and the description of a work package can also be found by [filtering by text](../work-packages/work-package-table-configuration/#filtering-by-text).
-Aside from full-text search, you can search work packages based on their attached file name or even within the content of an attachment.
+![openproject-search-work-package-attachments](openproject-search-work-package-attachments.png)
 
 **Note** Full text search is a Premium Feature in OpenProject and can only be used with [Enterprise cloud](../../enterprise-guide/enterprise-cloud-guide/) or [Enterprise on-premises](../../enterprise-guide/enterprise-on-premises-guide/). An upgrade from the free Community Edition is easily possible.
-
