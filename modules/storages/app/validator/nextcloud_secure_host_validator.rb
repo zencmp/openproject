@@ -25,31 +25,20 @@
 #
 # See COPYRIGHT and LICENSE files for more details.
 #++
+class NextcloudSecureHostValidator < ActiveModel::EachValidator
+  # A "secure" Nextcloud host is either a host via https or
+  # localhost/127.0.0.1. Ports are ignored.
+  def validate_each(contract, attribute, value)
+    begin
+      uri = URI.parse(value)
+    rescue StandardError
+      contract.errors.add(attribute, :could_not_parse_host_uri)
+      return
+    end
 
-require 'net/http'
-require 'uri'
+    return if uri.scheme == 'https' # https is always safe
+    return if ['localhost', '127.0.0.1'].include?(uri.host) # localhost is always safe
 
-# Purpose: common functionalities shared by CreateContract and UpdateContract
-# UpdateService by default checks if UpdateContract exists
-# and uses the contract to validate the model under consideration
-# (normally it's a model).
-module Storages::Storages
-  class BaseContract < ::ModelContract
-    MINIMAL_NEXTCLOUD_VERSION = 23
-
-    include ::Storages::Storages::Concerns::ManageStoragesGuarded
-    include ActiveModel::Validations
-
-    attribute :name
-    validates :name, presence: true, length: { maximum: 255 }
-
-    attribute :provider_type
-    validates :provider_type, inclusion: { in: ->(*) { Storages::Storage::PROVIDER_TYPES } }
-
-    attribute :host
-    validates :host, url: true, length: { maximum: 255 }
-    # Check that a host actually is a storage server.
-    # But only do so if the validations above for URL were successful.
-    validates :host, nextcloud_secure_host: true, nextcloud_compatible_host: true, unless: -> { errors.include?(:host) }
+    contract.errors.add(attribute, :host_not_https_or_localhost)
   end
 end
