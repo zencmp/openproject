@@ -44,22 +44,21 @@ describe SecureContextUriValidator do
     end.new
   end
 
-  describe 'empty URI' do
+  context 'with empty URI' do
     ['', ' ', nil].each do |uri|
-      describe "when URI is ''#{uri}''" do
+      describe "when URI is '#{uri}'" do
         it "adds an 'could_not_parse' error" do
           subject.host = uri
           subject.validate
           expect(subject.errors).to include(:host)
-          # expect(subject.errors.include?(:host)).to be_truthy
         end
       end
     end
   end
 
-  describe 'invalid URI' do
-    ['nope', '.', 'httppp://192.168.0.1', 'http://192.168', 'http://<>ample.com'].each do |uri|
-      describe "when URI is ''#{uri}''" do
+  context 'with invalid URI' do
+    %w(nope httppp://192.168.0.1 http://192.168 http://<>ample.com).each do |uri|
+      describe "when URI is '#{uri}'" do
         it "adds an error" do
           subject.host = uri
           subject.validate
@@ -69,9 +68,9 @@ describe SecureContextUriValidator do
     end
   end
 
-  describe 'secure URI' do
-    ['https://www.example.com', 'http://localhost', 'http://.localhost', 'http://foo.localhost.'].each do |uri|
-      describe "when URI is #{uri}" do
+  context 'with secure URI' do
+    %w(https://example.com http://localhost http://.localhost http://foo.localhost. http://foo.localhost).each do |uri|
+      describe "when URI is '#{uri}'" do
         it "does not add an error" do
           subject.host = uri
           subject.validate
@@ -81,12 +80,9 @@ describe SecureContextUriValidator do
     end
   end
 
-  # There are alternative forms of apparently valid IPV6 localhost
-  # notation not supported by URI.parse in SecureContextUriValidator,
-  # such as "::1" or "0001:0000:0000:0000:0000:0000:0000:0000".
-  describe 'secure IPV6 URI' do
-    ['http://[::1]'].each do |uri|
-      describe "when URI is #{uri}" do
+  context 'with secure IPV6 URI' do
+    %w(http://[::1]).each do |uri|
+      describe "when URI is '#{uri}'" do
         it "does not add an error" do
           subject.host = uri
           subject.validate
