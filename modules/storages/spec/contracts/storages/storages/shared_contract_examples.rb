@@ -116,13 +116,13 @@ shared_examples_for 'storage contract', :storage_server_helpers, webmock: true d
         include_examples 'contract is invalid', host: :url
       end
 
-      context 'when host is an unsave IP' do
+      context 'when host is an unsafe IP' do
         let(:storage_host) { 'http://172.16.193.146' }
 
         include_examples 'contract is invalid', host: :host_not_https_or_localhost
       end
 
-      context 'when host is an unsave hostname' do
+      context 'when host is an unsafe hostname' do
         let(:storage_host) { 'http://nc.openproject.com' }
 
         include_examples 'contract is invalid', host: :host_not_https_or_localhost

@@ -50,6 +50,6 @@ module Storages::Storages
     validates :host, url: true, length: { maximum: 255 }
     # Check that a host actually is a storage server.
     # But only do so if the validations above for URL were successful.
-    validates :host, nextcloud_secure_host: true, nextcloud_compatible_host: true, unless: -> { errors.include?(:host) }
+    validates :host, secure_context_uri: true, nextcloud_compatible_host: true, unless: -> { errors.include?(:host) }
   end
 end

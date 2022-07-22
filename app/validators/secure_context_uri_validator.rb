@@ -25,20 +25,43 @@
 #
 # See COPYRIGHT and LICENSE files for more details.
 #++
-class NextcloudSecureHostValidator < ActiveModel::EachValidator
-  # A "secure" Nextcloud host is either a host via https or
-  # localhost/127.0.0.1. Ports are ignored.
+
+# Please see https://w3c.github.io/webappsec-secure-contexts/
+# for a definition of "secure contexts".
+# Basically, a host has to have either a HTTPS scheme or be
+# localhost to be secure.
+class SecureContextUriValidator < ActiveModel::EachValidator
   def validate_each(contract, attribute, value)
     begin
       uri = URI.parse(value)
     rescue StandardError
+      uri = nil
+    end
+
+    if uri.nil? || uri.host.nil?
       contract.errors.add(attribute, :could_not_parse_host_uri)
       return
     end
 
-    return if uri.scheme == 'https' # https is always safe
-    return if ['localhost', '127.0.0.1'].include?(uri.host) # localhost is always safe
+    if check_invalid_uri(uri)
+      contract.errors.add(attribute, :host_not_https_or_localhost)
+    end
+  end
 
-    contract.errors.add(attribute, :host_not_https_or_localhost)
+  private
+
+  def check_invalid_uri(uri)
+    return false if uri.scheme == 'https' # https is always safe
+    return false if uri.host == 'localhost' # Simple localhost
+    return false if uri.host =~ /\.localhost\.?$/ # i.e. 'foo.localhost' or 'foo.localhost.'
+
+    # Check for loopback interface. The constructor can throw an exception for non IP addresses.
+    # Those are invalid. And if the host is an IP address then we can check if it is loopback.
+    begin
+      return false if IPAddr.new(uri.host).loopback?
+    rescue StandardError
+      return true
+    end
+    true
   end
 end

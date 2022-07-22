@@ -1,0 +1,98 @@
+#-- copyright
+# OpenProject is an open source project management software.
+# Copyright (C) 2012-2022 the OpenProject GmbH
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License version 3.
+#
+# OpenProject is a fork of ChiliProject, which is a fork of Redmine. The copyright follows:
+# Copyright (C) 2006-2013 Jean-Philippe Lang
+# Copyright (C) 2010-2013 the ChiliProject Team
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+#
+# See COPYRIGHT and LICENSE files for more details.
+#++
+
+# require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
+
+require 'spec_helper'
+
+describe SecureContextUriValidator do
+  subject do
+    Class.new do
+      include ActiveModel::Validations
+      def self.model_name
+        ActiveModel::Name.new(self, nil, "temp")
+      end
+
+      attr_accessor :host
+
+      validates :host, secure_context_uri: true
+    end.new
+  end
+
+  describe 'empty URI' do
+    ['', ' ', nil].each do |uri|
+      describe "when URI is ''#{uri}''" do
+        it "adds an 'could_not_parse' error" do
+          subject.host = uri
+          subject.validate
+          expect(subject.errors).to include(:host)
+          # expect(subject.errors.include?(:host)).to be_truthy
+        end
+      end
+    end
+  end
+
+  describe 'invalid URI' do
+    ['nope', '.', 'httppp://192.168.0.1', 'http://192.168', 'http://<>ample.com'].each do |uri|
+      describe "when URI is ''#{uri}''" do
+        it "adds an error" do
+          subject.host = uri
+          subject.validate
+          expect(subject.errors).to include(:host)
+        end
+      end
+    end
+  end
+
+  describe 'secure URI' do
+    ['https://www.example.com', 'http://localhost', 'http://.localhost', 'http://foo.localhost.'].each do |uri|
+      describe "when URI is #{uri}" do
+        it "does not add an error" do
+          subject.host = uri
+          subject.validate
+          expect(subject.errors).not_to include(:host)
+        end
+      end
+    end
+  end
+
+  # There are alternative forms of apparently valid IPV6 localhost
+  # notation not supported by URI.parse in SecureContextUriValidator,
+  # such as "::1" or "0001:0000:0000:0000:0000:0000:0000:0000".
+  describe 'secure IPV6 URI' do
+    ['http://[::1]'].each do |uri|
+      describe "when URI is #{uri}" do
+        it "does not add an error" do
+          subject.host = uri
+          subject.validate
+          expect(subject.errors).not_to include(:host)
+        end
+      end
+    end
+  end
+end
