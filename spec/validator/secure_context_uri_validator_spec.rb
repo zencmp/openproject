@@ -89,9 +89,9 @@ describe SecureContextUriValidator do
         describe "when URI is '#{uri}'" do
           let(:host) { uri }
 
-          it "adds a :uri_not_secure_context error" do
+          it "adds a :url_not_secure_context error" do
             expect(model_instance.errors).to include(:host)
-            expect(model_instance.errors.first.type).to be :uri_not_secure_context
+            expect(model_instance.errors.first.type).to be :url_not_secure_context
           end
         end
       end
