@@ -35,7 +35,7 @@ require 'uri'
 # (normally it's a model).
 module Storages::Storages
   class BaseContract < ::ModelContract
-    MINIMAL_NEXTCLOUD_VERSION = 23
+    MINIMAL_NEXTCLOUD_VERSION = 22
 
     include ::Storages::Storages::Concerns::ManageStoragesGuarded
     include ActiveModel::Validations

@@ -35,33 +35,37 @@ class SecureContextUriValidator < ActiveModel::EachValidator
     begin
       uri = URI.parse(value)
     rescue StandardError
-      uri = nil
-    end
-
-    if uri.nil? || uri.host.nil?
       contract.errors.add(attribute, :could_not_parse_host_uri)
       return
     end
 
-    if check_invalid_uri(uri)
+    # The URI could be parsable but not contain a host name
+    if uri.host.nil?
+      contract.errors.add(attribute, :could_not_parse_host_uri)
+      return
+    end
+
+    unless secure_context_uri?(uri)
       contract.errors.add(attribute, :uri_not_secure_context)
     end
   end
 
   private
 
-  def check_invalid_uri(uri)
-    return false if uri.scheme == 'https' # https is always safe
-    return false if uri.host == 'localhost' # Simple localhost
-    return false if uri.host =~ /\.localhost\.?$/ # i.e. 'foo.localhost' or 'foo.localhost.'
+  def secure_context_uri?(uri)
+    return true if uri.scheme == 'https' # https is always safe
+    return true if uri.host == 'localhost' # Simple localhost
+    return true if uri.host =~ /\.localhost\.?$/ # i.e. 'foo.localhost' or 'foo.localhost.'
 
     # Check for loopback interface. The constructor can throw an exception for non IP addresses.
     # Those are invalid. And if the host is an IP address then we can check if it is loopback.
     begin
-      return false if IPAddr.new(uri.host).loopback?
+      return true if IPAddr.new(uri.host).loopback?
     rescue StandardError
-      return true
+      return false
     end
-    true
+
+    # uri.host is an IP but not a loopback
+    false
   end
 end

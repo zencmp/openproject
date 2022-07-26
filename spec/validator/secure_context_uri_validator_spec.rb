@@ -31,62 +31,102 @@
 require 'spec_helper'
 
 describe SecureContextUriValidator do
-  subject do
+  let(:host) { nil }
+  let(:model_class) do
     Class.new do
       include ActiveModel::Validations
       def self.model_name
-        ActiveModel::Name.new(self, nil, "temp")
+        ActiveModel::Name.new(self, nil, "ValidatedModel")
       end
 
       attr_accessor :host
 
       validates :host, secure_context_uri: true
-    end.new
+    end
   end
+  let(:model_instance) { model_class.new.tap { |instance| instance.host = host } }
+
+  before { model_instance.validate }
 
   context 'with empty URI' do
     ['', ' ', nil].each do |uri|
       describe "when URI is '#{uri}'" do
-        it "adds an 'could_not_parse' error" do
-          subject.host = uri
-          subject.validate
-          expect(subject.errors).to include(:host)
+        let(:host) { uri }
+
+        it "adds an :could_not_parse_host_uri error" do
+          expect(model_instance.errors).to include(:host)
+          expect(model_instance.errors.first.type).to be :could_not_parse_host_uri
         end
       end
     end
   end
 
   context 'with invalid URI' do
-    %w(nope httppp://192.168.0.1 http://192.168 http://<>ample.com).each do |uri|
+    %w(some_string http://<>ample.com).each do |uri|
       describe "when URI is '#{uri}'" do
-        it "adds an error" do
-          subject.host = uri
-          subject.validate
-          expect(subject.errors).to include(:host)
+        let(:host) { uri }
+
+        it "adds an :could_not_parse_host_uri error" do
+          expect(model_instance.errors).to include(:host)
+          expect(model_instance.errors.first.type).to be :could_not_parse_host_uri
         end
       end
     end
   end
 
-  context 'with secure URI' do
-    %w(https://example.com http://localhost http://.localhost http://foo.localhost. http://foo.localhost).each do |uri|
-      describe "when URI is '#{uri}'" do
-        it "does not add an error" do
-          subject.host = uri
-          subject.validate
-          expect(subject.errors).not_to include(:host)
+  context 'with valid URI' do
+    context 'when host is missing' do
+      let(:host) { 'https://' }
+
+      it "adds an :could_not_parse_host_uri error" do
+        expect(model_instance.errors).to include(:host)
+        expect(model_instance.errors.first.type).to be :could_not_parse_host_uri
+      end
+    end
+
+    context 'when not providing a Secure Context' do
+      %w{http://128.0.0.1 http://foo.com http://[::2]}.each do |uri|
+        describe "when URI is '#{uri}'" do
+          let(:host) { uri }
+
+          it "adds a :uri_not_secure_context error" do
+            expect(model_instance.errors).to include(:host)
+            expect(model_instance.errors.first.type).to be :uri_not_secure_context
+          end
         end
       end
     end
-  end
 
-  context 'with secure IPV6 URI' do
-    %w(http://[::1]).each do |uri|
-      describe "when URI is '#{uri}'" do
+    context 'when providing a Secure Context' do
+      context 'with a loopback IP' do
+        %w{http://127.0.0.1 http://127.1.1.1}.each do |uri|
+          describe "when URI is '#{uri}'" do
+            let(:host) { uri }
+
+            it "does not add an error" do
+              expect(model_instance.errors).not_to include(:host)
+            end
+          end
+        end
+      end
+
+      context 'with a domain name' do
+        %w(https://example.com http://localhost http://.localhost http://foo.localhost. http://foo.localhost).each do |uri|
+          describe "when URI is '#{uri}'" do
+            let(:host) { uri }
+
+            it "does not add an error" do
+              expect(model_instance.errors).not_to include(:host)
+            end
+          end
+        end
+      end
+
+      context 'with IPV6 loopback URI' do
+        let(:host) { 'http://[::1]' }
+
         it "does not add an error" do
-          subject.host = uri
-          subject.validate
-          expect(subject.errors).not_to include(:host)
+          expect(model_instance.errors).not_to include(:host)
         end
       end
     end
