@@ -299,20 +299,19 @@ class AccountController < ApplicationController
   def registration_through_invitation!
     session[:auth_source_registration] = nil
 
-    if @user.nil?
-      @user = User.new(language: Setting.default_language)
-    elsif user_with_placeholder_name?(@user)
-      # force user to give their name
-      @user.firstname = nil
-      @user.lastname = nil
-    end
+    @user = Users::SetAttributesService.new(
+      model: @user || User.new, user: current_user,
+      contract_class: @user.nil? ? Users::CreateContract : Users::UpdateContract
+    ).call(@user.nil? ? { language: Setting.default_language } : { firstname: nil, lastname: nil })
+    .result
   end
 
   def self_registration!
     if @user.nil?
-      @user = User.new
-      @user.admin = false
-      @user.register
+      @user = Users::SetAttributesService
+        .new(model: User.new, user: current_user, contract_class: Users::CreateContract)
+        .call(admin: false, status: User.statuses[:registered])
+        .result
     end
 
     return if enforce_activation_user_limit(user: user_with_email(@user))
