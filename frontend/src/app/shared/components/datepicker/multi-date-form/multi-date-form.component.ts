@@ -123,6 +123,8 @@ export class OpMultiDateFormComponent extends UntilDestroyedMixin implements Aft
 
   @Input() changeset:ResourceChangeset;
 
+  @Input() value:string[] = [];
+
   @Input() fieldName:string = '';
 
   @Output() cancel = new EventEmitter();
@@ -240,7 +242,12 @@ export class OpMultiDateFormComponent extends UntilDestroyedMixin implements Aft
   }
 
   ngOnInit(): void {
+    this.setCurrentActivatedField(this.initialActivatedField);
     this.htmlId = `wp-datepicker-${this.fieldName as string}`;
+
+    if (!this.changeset) {
+      return;
+    }
 
     this.dateModalScheduling.setChangeset(this.changeset as WorkPackageChangeset);
     this.dateModalRelations.setChangeset(this.changeset as WorkPackageChangeset);
@@ -262,7 +269,24 @@ export class OpMultiDateFormComponent extends UntilDestroyedMixin implements Aft
 
     this.dates.start = this.changeset.value('startDate');
     this.dates.end = this.changeset.value('dueDate');
-    this.setCurrentActivatedField(this.initialActivatedField);
+
+    this
+      .formUpdates$
+      .pipe(
+        this.untilDestroyed(),
+        switchMap((fieldsToUpdate:FieldUpdates) => this
+          .apiV3Service
+          .work_packages
+          .withOptionalId(this.changeset.id === 'new' ? null : this.changeset.id)
+          .form
+          .forPayload({
+            ...fieldsToUpdate,
+            lockVersion: this.changeset.value<string>('lockVersion'),
+            ignoreNonWorkingDays: this.ignoreNonWorkingDays,
+            scheduleManually: this.scheduleManually,
+          })),
+      )
+      .subscribe((form) => this.updateDatesFromForm(form));
   }
 
   ngAfterViewInit():void {

@@ -67,11 +67,11 @@ export class CombinedDateEditFieldComponent extends DatePickerEditFieldComponent
   }
 
   public save():void {
-    this.handler.deactivate(true);
+    this.handler.handleUserSubmit();
   }
 
   public cancel():void {
-    this.handler.reset();
+    this.handler.handleUserCancel();
   }
 
   // Overwrite super in order to set the initial dates.

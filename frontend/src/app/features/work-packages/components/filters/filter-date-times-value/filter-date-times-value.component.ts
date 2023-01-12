@@ -59,6 +59,8 @@ export class FilterDateTimesValueComponent extends AbstractDateTimeValueControll
 
   @Output() public filterChanged = new DebouncedEventEmitter<QueryFilterInstanceResource>(componentDestroyed(this));
 
+  isOpened = false;
+
   readonly text = {
     spacer: this.I18n.t('js.filter.value_spacer'),
   };

@@ -15,6 +15,7 @@
   <div class="spot-modal--body spot-container form -vertical">
     <div class="op-datepicker-modal--toggle-actions-container">
       <op-datepicker-scheduling-toggle
+        *ngIf="changeset"
         name="scheduleManually"
         [(ngModel)]="scheduleManually"
         (ngModelChange)="changeSchedulingMode()"
@@ -104,8 +105,10 @@
       </spot-form-field>
     </div>
 
-    <input id="flatpickr-input"
-           hidden>
+    <input
+      id="flatpickr-input"
+      hidden
+    >
   </div>
 
   <div class="spot-action-bar">
