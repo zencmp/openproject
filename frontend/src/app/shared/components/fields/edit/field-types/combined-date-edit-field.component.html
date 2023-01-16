@@ -13,17 +13,17 @@
   <op-single-date-form
     *ngIf="!isMultiDate"
     [value]="dates"
-    [changeset]="change"
-    (save)="save()"
+    [minimumDate]="minimumDate]
+    (updateNonWorkingDays)="updateNonWorkingDays($event)"
+    (save)="save($event)"
     (cancel)="cancel()"
     slot="body"
   ></op-single-date-form>
   <op-multi-date-form
     *ngIf="isMultiDate"
     [value]="dates"
-    [changeset]="change"
     [fieldName]="name"
-    (save)="save()"
+    (save)="save($event)"
     (cancel)="cancel()"
     slot="body"
   ></op-multi-date-form>

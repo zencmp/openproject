@@ -65,8 +65,10 @@ export class FilterDateTimesValueComponent extends AbstractDateTimeValueControll
     spacer: this.I18n.t('js.filter.value_spacer'),
   };
 
-  constructor(readonly I18n:I18nService,
-    readonly timezoneService:TimezoneService) {
+  constructor(
+    readonly I18n:I18nService,
+    readonly timezoneService:TimezoneService,
+  ) {
     super(I18n, timezoneService);
   }
 
@@ -100,5 +102,18 @@ export class FilterDateTimesValueComponent extends AbstractDateTimeValueControll
       return this.timezoneService.parseDatetime(this.end.toString());
     }
     return null;
+  }
+
+  public open():void {
+    this.isOpened = true;
+  }
+
+  public close():void {
+    this.isOpened = false;
+  }
+
+  public updateValues([begin, end]: string[]):void {
+    this.begin = begin;
+    this.end = end;
   }
 }

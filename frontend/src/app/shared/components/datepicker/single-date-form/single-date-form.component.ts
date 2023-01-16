@@ -40,6 +40,7 @@ import {
   ViewChild,
   ViewEncapsulation,
   HostBinding,
+  Optional,
 } from '@angular/core';
 import { I18nService } from 'core-app/core/i18n/i18n.service';
 import { DatePicker } from 'core-app/shared/components/datepicker/datepicker';
@@ -77,23 +78,23 @@ import { WorkPackageChangeset } from 'core-app/features/work-packages/components
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  providers: [
-    DateModalSchedulingService,
-    DateModalRelationsService,
-  ],
 })
 export class OpSingleDateFormComponent extends UntilDestroyedMixin implements AfterViewInit, OnInit {
   @HostBinding('class.op-datepicker-modal') className = true;
 
-  @Input('value') value = '';
+  @Input() value = '';
 
-  @Input() changeset:ResourceChangeset;
+  @Input() minimumDate:Date|null = null;
+
+  @Input() ignoreNonWorkingDays = false;
 
   @ViewChild('modalContainer') modalContainer:ElementRef<HTMLElement>;
 
+  @Output() updateNonWorkingDays = new EventEmitter<boolean>();
+
   @Output() cancel = new EventEmitter();
 
-  @Output() save = new EventEmitter();
+  @Output() save = new EventEmitter<string>();
 
   text = {
     save: this.I18n.t('js.button_save'),
@@ -102,8 +103,6 @@ export class OpSingleDateFormComponent extends UntilDestroyedMixin implements Af
     placeholder: this.I18n.t('js.placeholders.default'),
     today: this.I18n.t('js.label_today'),
   };
-
-  ignoreNonWorkingDays = false;
 
   htmlId = '';
 
@@ -123,25 +122,17 @@ export class OpSingleDateFormComponent extends UntilDestroyedMixin implements Af
     readonly I18n:I18nService,
     readonly timezoneService:TimezoneService,
     readonly halEditing:HalResourceEditingService,
-    readonly dateModalScheduling:DateModalSchedulingService,
-    readonly dateModalRelations:DateModalRelationsService,
+    @Optional() readonly dateModalScheduling:DateModalSchedulingService,
   ) {
     super();
   }
   
   ngOnInit():void {
-    this.dateModalRelations.setChangeset(this.changeset as WorkPackageChangeset);
-    this.dateModalScheduling.setChangeset(this.changeset as WorkPackageChangeset);
     this.date = this.timezoneService.formattedISODate(this.value);
   }
 
   ngAfterViewInit():void {
-    this
-      .dateModalRelations
-      .getMinimalDateFromPreceeding()
-      .subscribe((date) => {
-        this.initializeDatepicker(date);
-      });
+    this.initializeDatepicker(this.minimumDate);
 
     this
       .dateChangedManually$
@@ -173,14 +164,8 @@ export class OpSingleDateFormComponent extends UntilDestroyedMixin implements Af
   doSave($event:Event):void {
     $event.preventDefault();
     // Apply include NWD
-    this.changeset.setValue('ignoreNonWorkingDays', this.ignoreNonWorkingDays);
-
-    // Apply the dates if they could be changed
-    if (this.dateModalScheduling.isSchedulable) {
-      this.changeset.setValue('date', mappedDate(this.date));
-    }
-
-    this.save.emit();
+    this.updateNonWorkingDays.emit(this.ignoreNonWorkingDays);
+    this.save.emit(this.date || undefined);
   }
 
   doCancel():void {
@@ -230,7 +215,10 @@ export class OpSingleDateFormComponent extends UntilDestroyedMixin implements Af
             this.ignoreNonWorkingDays,
             this.datePickerInstance?.weekdaysService.isNonWorkingDay(dayElem.dateObj),
             minimalDate,
-            this.dateModalScheduling.isDayDisabled(dayElem, minimalDate),
+            // TODO: Really this component should not have a ref to this service at all anymore
+            this.dateModalScheduling
+              ? this.dateModalScheduling.isDayDisabled(dayElem, minimalDate)
+              : !!minimalDate && dayElem.dateObj <= minimalDate,
           );
         },
       },

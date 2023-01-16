@@ -1,23 +1,22 @@
 <spot-drop-modal
   [open]="isOpened"
-  (closed)="isOpened = false"
+  (closed)="close()"
   alignment="bottom-center"
 >
   <button
     slot="trigger"
     type="button"
-    (click)="showDatePickerModal()"
+    (click)="open()"
     class="spot-input"
-  >{{ dates }}</button>
+  >{{ begin }} {{ text.spacer }} {{ end }}</button>
 
   <op-multi-date-form
     slot="body"
-    (changed)="begin = isoDateParser($event)"
-    [value]="isoDateFormatter(begin)"
+    (changed)="updateValues($event)"
+    [value]="[begin, end]"
     [opAutofocus]="shouldFocus"
     required="true"
-    [id]="'values-' + filter.id + '-begin'"
-    [name]="'v[' + filter.id + ']-begin'"
+    [attr.id]="'values-' + filter.id + '-begin'"
   ></op-multi-date-form>
 </spot-drop-modal>
 
@@ -31,11 +30,6 @@
   classes="advanced-filters--date-field"
   size="10"
 ></op-single-date-picker-->
-
-<span
-  class="advanced-filters--affix"
-  [textContent]="text.spacer"
-></span>
 
 <!--op-single-date-picker
   (changed)="end = isoDateParser($event)"

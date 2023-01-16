@@ -54,7 +54,7 @@ import { parseDate } from 'core-app/shared/components/datepicker/helpers/date-mo
 @Injectable()
 export class DateModalRelationsService {
   private changeset$:Subject<WorkPackageChangeset> = new ReplaySubject();
-  private changeset:WorkPackageChangeset;
+  private changeset:WorkPackageChangeset|undefined;
 
   setChangeset(changeset:WorkPackageChangeset) {
     this.changeset$.next(changeset);
@@ -149,8 +149,8 @@ export class DateModalRelationsService {
   }
 
   get ancestors():HalResource[] {
-    const wp = this.changeset.projectedResource;
-    return wp.ancestors || [];
+    const wp = this.changeset?.projectedResource;
+    return wp?.ancestors || [];
   }
 
   /**
@@ -162,8 +162,8 @@ export class DateModalRelationsService {
   }
 
   get children():HalResource[] {
-    const wp = this.changeset.projectedResource;
-    return wp.children || [];
+    const wp = this.changeset?.projectedResource;
+    return wp?.children || [];
   }
 
   getInvolvedWorkPackageIds():Observable<string[]> {
@@ -174,12 +174,12 @@ export class DateModalRelationsService {
       .pipe(
         map(
           ([preceding, following]) => [
-            this.changeset.pristineResource,
+            this.changeset?.pristineResource,
             ...preceding,
             ...following,
             ...this.children,
             ...this.ancestors,
-          ].map((el) => el.id as string),
+          ].map((el) => el?.id as string),
         ),
       );
   }
