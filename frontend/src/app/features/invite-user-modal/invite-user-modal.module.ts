@@ -17,6 +17,7 @@ import { PrincipalSearchComponent } from './principal/principal-search.component
 import { RoleSearchComponent } from './role/role-search.component';
 import { SummaryComponent } from './summary/summary.component';
 import { SuccessComponent } from './success/success.component';
+import { SpotBreadcrumbsComponent } from 'core-app/spot/components/breadcrumbs/breadcrumbs.component';
 
 export function initializeServices(injector:Injector) {
   return function () {
@@ -36,6 +37,8 @@ export function initializeServices(injector:Injector) {
     DynamicFormsModule,
     InviteUserButtonModule,
     CurrentUserModule,
+
+    SpotBreadcrumbsComponent,
   ],
   exports: [
     InviteUserButtonModule,

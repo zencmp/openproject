@@ -57,6 +57,7 @@ import {
 import {
   UploadConflictModalComponent,
 } from 'core-app/shared/components/storages/upload-conflict-modal/upload-conflict-modal.component';
+import { SpotBreadcrumbsComponent } from 'core-app/spot/components/breadcrumbs/breadcrumbs.component';
 
 @NgModule({
   imports: [
@@ -64,6 +65,9 @@ import {
     IconModule,
     OpSpotModule,
     OpSharedModule,
+
+    // Standalone components are imported like modules
+    SpotBreadcrumbsComponent,
   ],
   declarations: [
     StorageComponent,

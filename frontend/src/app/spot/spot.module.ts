@@ -16,7 +16,6 @@ import { SpotDropModalComponent } from './components/drop-modal/drop-modal.compo
 import { SpotTooltipComponent } from './components/tooltip/tooltip.component';
 import { SpotFormFieldComponent } from './components/form-field/form-field.component';
 import { SpotFormBindingDirective } from './components/form-field/form-binding.directive';
-import { SpotBreadcrumbsComponent } from './components/breadcrumbs/breadcrumbs.component';
 import { SpotSelectorFieldComponent } from './components/selector-field/selector-field.component';
 import { SpotDropModalPortalComponent } from './components/drop-modal/drop-modal-portal.component';
 
@@ -33,7 +32,6 @@ import { SpotDropModalPortalComponent } from './components/drop-modal/drop-modal
   ],
 
   declarations: [
-    SpotBreadcrumbsComponent,
     SpotCheckboxComponent,
     SpotSwitchComponent,
     SpotToggleComponent,
@@ -49,7 +47,6 @@ import { SpotDropModalPortalComponent } from './components/drop-modal/drop-modal
   ],
 
   exports: [
-    SpotBreadcrumbsComponent,
     SpotCheckboxComponent,
     SpotSwitchComponent,
     SpotToggleComponent,

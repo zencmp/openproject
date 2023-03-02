@@ -7,6 +7,16 @@
 
   <div class="spot-divider"></div>
 
+  <spot-breadcrumbs
+    [content]="{ crumbs: [
+      { text: 'bc 1' },
+      { text: 'bc 2' },
+      { text: 'bc 3' }
+    ] }"
+  ></spot-breadcrumbs>
+
+  <div class="spot-divider"></div>
+
   <div class="spot-modal--body spot-container">
     <spot-form-field
       [label]="text.project.label"

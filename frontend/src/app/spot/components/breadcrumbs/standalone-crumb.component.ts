@@ -30,31 +30,26 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  HostBinding,
-  Input,
 } from '@angular/core';
 
-import { BreadcrumbsContent } from 'core-app/spot/components/breadcrumbs/breadcrumbs-content';
-import { SpotStandaloneCrumbComponent } from './standalone-crumb.component';
-
 @Component({
-  selector: 'spot-breadcrumbs',
-  templateUrl: './breadcrumbs.component.html',
-
-  // Mark this components as being standalone
+  selector: 'spot-standalone-crumb',
+  template: `
+  <button
+    *ngIf="isGreat"
+    (click)="isGreat = false"
+  >Standalone!</button>
+  <button
+    *ngIf="!isGreat"
+    (click)="isGreat = true"
+  >Standalone?</button>
+  `,
   standalone: true,
-
-  // Standalone components have imports like modules
   imports: [
     CommonModule,
-
-    // Other standalone components and directives can be imported
-    SpotStandaloneCrumbComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SpotBreadcrumbsComponent {
-  @HostBinding('class.spot-breadcrumbs') className = true;
-
-  @Input() content:BreadcrumbsContent;
+export class SpotStandaloneCrumbComponent {
+  isGreat = false;
 }
