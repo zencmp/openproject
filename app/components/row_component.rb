@@ -61,6 +61,14 @@ class RowComponent < RailsComponent
     []
   end
 
+  def row_css_id
+    nil
+  end
+
+  def row_css_class
+    nil
+  end
+
   def checkmark(condition)
     if condition
       helpers.op_icon 'icon icon-checkmark'
