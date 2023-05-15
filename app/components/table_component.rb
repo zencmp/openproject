@@ -73,10 +73,23 @@ class TableComponent < RailsComponent
         Array(@sortable_columns)
       end
     end
-  end
 
-  def rows
-    model
+    def add_column(name)
+      @columns = Array(@columns) + [name]
+      row_class.property name
+    end
+
+    def row_class
+      mod = name.split("::")[0..-2].join("::").presence || "Table"
+
+      "#{mod}::RowComponent".constantize
+    rescue NameError
+      raise(
+        NameError,
+        "#{mod}::RowComponent required by #{mod}::TableComponent not defined. " +
+        "Expected to be defined in `app/components/#{mod.underscore}/row_component.rb`."
+      )
+    end
   end
 
   def before_render
@@ -119,16 +132,12 @@ class TableComponent < RailsComponent
       .per_page(per_page_param)
   end
 
-  def row_class
-    mod = self.class.name.deconstantize.presence || "Table"
+  def rows
+    model
+  end
 
-    "#{mod}::RowComponent".constantize
-  rescue NameError
-    raise(
-      NameError,
-      "#{mod}::RowComponent required by #{mod}::TableComponent not defined. " +
-      "Expected to be defined in `app/components/#{mod.underscore}/row_component.rb`."
-    )
+  def row_class
+    self.class.row_class
   end
 
   def columns

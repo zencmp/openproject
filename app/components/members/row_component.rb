@@ -33,7 +33,7 @@ module Members
     include AvatarHelper
     include UsersHelper
 
-    delegate :principal, to: :model
+    property :principal
 
     def member
       model
