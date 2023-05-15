@@ -27,6 +27,9 @@ jobs:
           - base_prefix: ppc64le/
             platforms: linux/ppc64le
             bim_support: false
+          - base_prefix: arm64v8/
+            platforms: linux/arm64/v8
+            bim_support: false
     steps:
       # Get the repository's code
       - name: Checkout
