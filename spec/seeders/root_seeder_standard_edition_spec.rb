@@ -78,6 +78,10 @@ describe RootSeeder,
         "team_planner" => 1
       )
     end
+
+    it 'creates workflows' do
+      expect(Workflow.count).to eq(1172)
+    end
   end
 
   describe 'demo data' do
