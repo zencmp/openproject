@@ -29,7 +29,7 @@
 require Rails.root.join("db", "migrate", "migration_utils", "migration_squasher").to_s
 # This migration aggregates the migrations detailed in MIGRATION_FILES
 class ToV710AggregatedDocumentsMigrations < ActiveRecord::Migration[5.1]
-  MIGRATION_FILES = <<-MIGRATIONS
+  MIGRATION_FILES = <<-MIGRATIONS.freeze
     20130807085604_create_document_journals.rb
     20130814131242_create_documents_tables.rb
     20140320140001_legacy_document_journal_data.rb

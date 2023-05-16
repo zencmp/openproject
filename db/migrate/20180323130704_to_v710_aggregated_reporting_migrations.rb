@@ -29,7 +29,7 @@
 require Rails.root.join("db", "migrate", "migration_utils", "migration_squasher").to_s
 # This migration aggregates the migrations detailed in MIGRATION_FILES
 class ToV710AggregatedReportingMigrations < ActiveRecord::Migration[5.1]
-  MIGRATION_FILES = <<-MIGRATIONS
+  MIGRATION_FILES = <<-MIGRATIONS.freeze
     20110215143061_aggregated_reporting_migrations.rb
     20130612104243_reporting_migrate_serialized_yaml.rb
     20130925090243_cost_reports_migration.rb

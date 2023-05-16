@@ -26,8 +26,8 @@
 # See COPYRIGHT and LICENSE files for more details.
 #++
 
-require Rails.root.to_s + '/db/migrate/migration_utils/module_renamer'
-require Rails.root.to_s + '/db/migrate/migration_utils/setting_renamer'
+require "#{Rails.root}/db/migrate/migration_utils/module_renamer"
+require "#{Rails.root}/db/migrate/migration_utils/setting_renamer"
 
 class RenameTimeAndCostModule < ActiveRecord::Migration[6.0]
   def up

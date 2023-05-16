@@ -29,7 +29,7 @@
 require Rails.root.join("db", "migrate", "migration_utils", "migration_squasher").to_s
 # This migration aggregates the migrations detailed in MIGRATION_FILES
 class ToV710AggregatedMeetingMigrations < ActiveRecord::Migration[5.1]
-  MIGRATION_FILES = <<-MIGRATIONS
+  MIGRATION_FILES = <<-MIGRATIONS.freeze
     20111605171865_aggregated_meeting_migrations.rb
     20130924114042_legacy_meeting_minutes_journal_data.rb
     20130731151542_remove_meeting_role_id_from_meeting_participants.rb

@@ -1,6 +1,7 @@
 class MakeSynchronizedGroupDn < ActiveRecord::Migration[6.0]
   def up
-    add_column :ldap_groups_synchronized_groups, :dn, :text, index: true
+    add_column :ldap_groups_synchronized_groups, :dn, :text
+    add_index :ldap_groups_synchronized_groups, :dn
     add_column :ldap_groups_synchronized_groups,
                :users_count,
                :integer,

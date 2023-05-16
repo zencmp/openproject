@@ -29,7 +29,7 @@
 require Rails.root.join("db", "migrate", "migration_utils", "migration_squasher").to_s
 # This migration aggregates the migrations detailed in MIGRATION_FILES
 class ToV710AggregatedCostsMigrations < ActiveRecord::Migration[5.1]
-  MIGRATION_FILES = <<-MIGRATIONS
+  MIGRATION_FILES = <<-MIGRATIONS.freeze
     20121022124254_aggregated_costs_migrations.rb
     20130529145329_remove_signoff_from_cost_objects.rb
     20130625094710_add_costs_column_to_work_package.rb
